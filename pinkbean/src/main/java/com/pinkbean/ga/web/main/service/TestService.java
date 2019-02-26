@@ -1,4 +1,4 @@
-package com.pinkbean.ga.main.service;
+package com.pinkbean.ga.web.main.service;
 
 public interface TestService {
 	

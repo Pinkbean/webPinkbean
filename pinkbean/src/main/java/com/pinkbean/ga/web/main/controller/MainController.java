@@ -1,26 +1,24 @@
-package com.pinkbean.ga.main.controller;
+package com.pinkbean.ga.web.main.controller;
 
 import java.sql.SQLException;
 import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
-import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
-import com.pinkbean.ga.main.service.TestService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pinkbean.ga.web.main.service.TestService;
 
 /**
  * Handles requests for the application home page.
@@ -62,8 +60,7 @@ public class MainController {
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
-	@ResponseBody
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView homeSave(Locale locale, Model model, HttpServletRequest req, HttpSession session) {
 		System.out.println("Home_Save Page Requested, locale = " + locale);
 		ModelAndView mv = new ModelAndView();
@@ -71,6 +68,7 @@ public class MainController {
 		System.out.println("테스트 키워드: "+req.getParameter("keyWord"));
 		session.setAttribute("keyWord", req.getParameter("keyWord"));
 
+		mv.addObject("test","test");
 		return mv;
 	}
 	
