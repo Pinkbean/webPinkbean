@@ -15,8 +15,6 @@
 $(function() {
 
     $("#submitBtn").on("click", function() {
-
-    	console.log('ㅇㅅㅇ');
     	
         $.ajax({
             url: "/save", // 클라이언트가 요청을 보낼 서버의 URL 주소
@@ -50,5 +48,6 @@ $(function() {
 	</form>
 	
 	<a href="/menu01">다른 메뉴에서 확인</a>
+	<a href="/axisj">Axisj</a>
 </body>
 </html>

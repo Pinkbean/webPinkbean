@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -42,10 +44,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         InternalResourceViewResolver jspViewResolver = new InternalResourceViewResolver();
         jspViewResolver.setViewClass(JstlView.class);
         jspViewResolver.setPrefix("/WEB-INF/jsp/");
-        jspViewResolver.setSuffix(".jsp");
+        jspViewResolver.setSuffix(".jsp");        
         
         // jsonViewResolver
-        JsonViewResolver jsonViewResolver = new JsonViewResolver();
+        JsonViewResolver jsonViewResolver = new JsonViewResolver();      
 
         // Content Negotiating ViewResolver
         ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
@@ -59,4 +61,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         resolver.setViewResolvers(resolvers);
         return resolver;
     }
+    
+    @Bean
+    public MultipartResolver multipartResolver() {
+    	CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver ();
+        multipartResolver.setMaxUploadSize(10 * 1024 * 1024); // 10MB
+        multipartResolver.setMaxInMemorySize(0);
+        
+        return multipartResolver;
+    }    
 }
