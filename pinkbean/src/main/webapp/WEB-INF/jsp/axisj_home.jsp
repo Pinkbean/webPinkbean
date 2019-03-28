@@ -79,7 +79,7 @@ $(function() {
 	});
 	
 	// 파일 업로드
-	$("#fileUploadBtn").on("click", function() {
+	$("#fileObj").on("change", function() {
         
         var formData = new FormData(); 
         for (var i = 0; i < $("#fileObj").get(0).files.length ; i++){
@@ -117,7 +117,7 @@ $(function() {
 				$(newDiv).append("<input type='hidden' name='filePath' 	value='"+d.fileDtoList[i].filePath+"'>");
 				$(newDiv).append("<input type='hidden' name='fileSize' 	value='"+d.fileDtoList[i].fileSize+"'>");
 				$(newDiv).append("<input type='hidden' name='fileExt' 	value='"+d.fileDtoList[i].fileExt+"'>");
-				$(newDiv).append("<input type='hidden' name='saveFlag' 	value='save'>");
+				$(newDiv).append("<input type='hidden' name='saveFlag' 	value='S'>");
 			}
         })
         .fail(function(d) {
@@ -152,7 +152,18 @@ $(function() {
 	
 	// 선택한 파일 삭제
 	$("#fileDiv").on("click", "div .fileDelBtn",function() {	
-		$(this).parent().remove();
+		console.log($(this).parent().find("input[name=atchId]").val().length);
+		
+		// atchId 가 존재하지 않으면 신규이므로 div를 통째로 제거
+		if ($(this).parent().find("input[name=atchId]").val().length <= 0){
+			$(this).parent().remove();
+		}
+		
+		// atchId 가 존재하면  기존 파일이므로 플래그 d 및 disable
+		if ($(this).parent().find("input[name=atchId]").val().length > 0){
+			$(this).parent().find("input[name=saveFlag]").attr("value", "D");
+			$(this).parent().hide();
+		}		
 	});
 	
 	// 선택한 파일 다운로드
@@ -176,7 +187,5 @@ $(function() {
 		<div id="fileDiv"></div>
 		<input type="submit" value="test">
 	</form>
-	
-	<input type="button" value="test" id="fileUploadBtn"/>
 </body>
 </html>
