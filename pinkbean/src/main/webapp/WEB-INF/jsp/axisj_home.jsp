@@ -78,7 +78,8 @@ $(function() {
 		myGrid.setList(list);
 	});
 	
-	$("#fileCheckBtn").on("click", function() {
+	// 파일 업로드
+	$("#fileUploadBtn").on("click", function() {
         
         var formData = new FormData(); 
         for (var i = 0; i < $("#fileObj").get(0).files.length ; i++){
@@ -99,15 +100,64 @@ $(function() {
             type: "POST",    
             dataType: "json"   
         })
-        .done(function(d) {
-			console.log(d);
-			//location.reload();
+        .done(function(d) {			
+        	
+			for (var i = 0; i < d.fileDtoList.length; i++){
+				
+				// 해당 파일정보를 담고있을 div를 추가한다.
+				$("#fileDiv").append("<div></duv>");
+				var newDiv = $("#fileDiv div").last();
+
+				// 파일 info 추가
+				$(newDiv).append("<span class='fileDownBtn'>"+d.fileDtoList[i].lfileName+"</span>");
+				$(newDiv).append("<input type='button' value='삭제' class='fileDelBtn'>");
+				$(newDiv).append("<input type='hidden' name='atchId' 	value=''>");
+				$(newDiv).append("<input type='hidden' name='pFileName' value='"+d.fileDtoList[i].pFileName+"'>");
+				$(newDiv).append("<input type='hidden' name='lfileName' value='"+d.fileDtoList[i].lfileName+"'>");
+				$(newDiv).append("<input type='hidden' name='filePath' 	value='"+d.fileDtoList[i].filePath+"'>");
+				$(newDiv).append("<input type='hidden' name='fileSize' 	value='"+d.fileDtoList[i].fileSize+"'>");
+				$(newDiv).append("<input type='hidden' name='fileExt' 	value='"+d.fileDtoList[i].fileExt+"'>");
+				$(newDiv).append("<input type='hidden' name='saveFlag' 	value='save'>");
+			}
         })
         .fail(function(d) {
 
             alert("요청 실패" + d.value);
            // location.reload();
         });    
+	});	
+	
+	// 모든 폼이 전송되기 전, 다음 이벤트를 수행한다.
+	$("form").on("submit", function() {
+ 		// fileDiv를 가지고 있는가?
+ 		if ($("#fileDiv").length <= 0)
+ 			return;
+ 	
+ 		// 업로드된 파일이 존재하는가?
+ 		if ($("#fileDiv div").length <= 0)
+ 			return;
+ 		
+ 		// 자식div의 each를 돌린다.
+ 		$.each($("#fileDiv div"), function(i, val){
+
+ 			$(this).find("input[name=atchId]").attr("name", "fileDtoList["+i+"].atchId");
+ 			$(this).find("input[name=pFileName]").attr("name", "fileDtoList["+i+"].pFileName");
+ 			$(this).find("input[name=lfileName]").attr("name", "fileDtoList["+i+"].lfileName");
+ 			$(this).find("input[name=filePath]").attr("name", "fileDtoList["+i+"].filePath");
+ 			$(this).find("input[name=fileSize]").attr("name", "fileDtoList["+i+"].fileSize");
+ 			$(this).find("input[name=fileExt]").attr("name", "fileDtoList["+i+"].fileExt");
+ 			$(this).find("input[name=saveFlag]").attr("name", "fileDtoList["+i+"].saveFlag");
+ 		});
+	});		
+	
+	// 선택한 파일 삭제
+	$("#fileDiv").on("click", "div .fileDelBtn",function() {	
+		$(this).parent().remove();
+	});
+	
+	// 선택한 파일 다운로드
+	$("#fileDiv").on("click", "div .fileDownBtn",function() {	
+		console.log('다운로드할거임 파일 :: '+$(this).text());
 	});	
 	
 	fnObj.pageStart();
@@ -120,10 +170,13 @@ $(function() {
 	
 	<input type="button" value="test" id="changeListBtn"/>
 	
-	<form id="fileForm" action="/file/upload" method="post" enctype="multipart/form-data">
-		<input multiple="multiple" type="file" id="fileObj" name="fileObj">	
+	<input multiple="multiple" type="file" id="fileObj" name="fileObj">	
+	
+	<form id="fileForm" action="/file/save" method="post">
+		<div id="fileDiv"></div>
+		<input type="submit" value="test">
 	</form>
 	
-	<input type="button" value="test" id="fileCheckBtn"/>
+	<input type="button" value="test" id="fileUploadBtn"/>
 </body>
 </html>
