@@ -20,7 +20,8 @@
 <script type="text/javascript" src="/resources/axj/lib/AXSelect.js"></script>
 <script type="text/javascript" src="/resources/axj/lib/AXGrid.js"></script>
 <script type="text/javascript" src="/resources/axj/lib/AXProgress.js"></script>
-
+<!-- plugins block -->
+<script src="/resources/plugins/editor/js/service/HuskyEZCreator.js"></script>
 <html>
 <head>
 <title>Home</title>
@@ -79,11 +80,11 @@ $(function() {
 	});
 	
 	// 파일 업로드
-	$("#fileObj").on("change", function() {
+	$(".file").on("change", function() {
         
         var formData = new FormData(); 
-        for (var i = 0; i < $("#fileObj").get(0).files.length ; i++){
-        	formData.append('file'+i, $("#fileObj").get(0).files[i]); 
+        for (var i = 0; i < $(this).get(0).files.length ; i++){
+        	formData.append('file'+i, $(this).get(0).files[i]); 
         }
         
         for (var value of formData.values()) {
@@ -171,6 +172,15 @@ $(function() {
 		console.log('다운로드할거임 파일 :: '+$(this).text());
 	});	
 	
+	// 스마트에디터
+	var oEditors = [];
+	nhn.husky.EZCreator.createInIFrame({
+	   oAppRef: oEditors
+	 , elPlaceHolder: "editerArea" // element ID
+	 , sSkinURI: "/resources/plugins/editor/SmartEditor2Skin.html"
+	 , fCreator: "createSEditor2"
+	});
+	
 	fnObj.pageStart();
 });
 </script>
@@ -187,5 +197,7 @@ $(function() {
 		<div id="fileDiv"></div>
 		<input type="submit" value="test">
 	</form>
+	
+	<textarea rows="5" cols="100" id="editerArea" name="editerArea"></textarea>
 </body>
 </html>
