@@ -66,7 +66,7 @@ public class fileController {
 		
 		// 颇老 历厘 版肺 贸府
 		//filePath   = mpreq.getSession().getServletContext().getRealPath("/")+File.separator+"upload";
-		filePath   = mpreq.getSession().getServletContext().getResourcePaths("/")+File.separator+"upload";
+		filePath   = mpreq.getSession().getServletContext().getRealPath("/resources/upload");
 		File saveDir = new File(filePath);
 		if (!saveDir.exists()) {
 			saveDir.mkdir();
@@ -120,9 +120,6 @@ public class fileController {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(value = "/file/se/upload",  produces = MediaType.TEXT_HTML_VALUE)
-//	public Object fileSeUpload(HttpServletRequest req, HttpServletResponse response, @RequestPart(value = "file") MultipartFile file,
-//            @RequestParam(value = "callback", required = false, defaultValue = "") String callback,
-//            @RequestParam(value = "callback_func", required = false, defaultValue = "") String callbackFunction) throws Exception {
 	public Object fileSeUpload(HttpServletRequest req, HttpServletResponse response, @RequestPart(value = "file") MultipartFile file) throws Exception {		
 		ModelAndView mv = new ModelAndView();
 
