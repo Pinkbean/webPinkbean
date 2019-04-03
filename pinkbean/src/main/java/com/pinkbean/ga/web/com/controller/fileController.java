@@ -11,17 +11,24 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.pinkbean.ga.web.com.dao.FileDto;
 
@@ -58,7 +65,8 @@ public class fileController {
 		long   fileSize    = 0;
 		
 		// 파일 저장 경로 처리
-		filePath   = mpreq.getSession().getServletContext().getRealPath("/")+File.separator+"upload";
+		//filePath   = mpreq.getSession().getServletContext().getRealPath("/")+File.separator+"upload";
+		filePath   = mpreq.getSession().getServletContext().getResourcePaths("/")+File.separator+"upload";
 		File saveDir = new File(filePath);
 		if (!saveDir.exists()) {
 			saveDir.mkdir();
@@ -80,13 +88,6 @@ public class fileController {
 				pFileName  = file.getOriginalFilename().split("\\.")[0] + UUID.randomUUID() +"."+ fileExt;
 				fileSize   = file.getSize();
 				
-				System.out.println("filename 	:: "+filename);
-				System.out.println("origFileNm 	:: "+lfileName);
-				System.out.println("fileExt 	:: "+fileExt);		
-				System.out.println("phyfileNm 	:: "+pFileName);	
-				System.out.println("filePath 	:: "+filePath);	
-				System.out.println("fileSize 	:: "+fileSize);		
-				
 				fileDto.setLfileName(lfileName);
 				fileDto.setFileSize(fileSize);
 				fileDto.setFileExt(fileExt);
@@ -104,6 +105,70 @@ public class fileController {
 		mv.setViewName("axisj_home");
 		return mv;
 	}	
+	
+
+	/**
+	 * fileSeUpload
+	 * smartEditor 전용 file upload controller
+	 * 
+	 * @param response
+	 * @param originalFile
+	 * @param callback
+	 * @param callbackFunction
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping(value = "/file/se/upload",  produces = MediaType.TEXT_HTML_VALUE)
+//	public Object fileSeUpload(HttpServletRequest req, HttpServletResponse response, @RequestPart(value = "file") MultipartFile file,
+//            @RequestParam(value = "callback", required = false, defaultValue = "") String callback,
+//            @RequestParam(value = "callback_func", required = false, defaultValue = "") String callbackFunction) throws Exception {
+	public Object fileSeUpload(HttpServletRequest req, HttpServletResponse response, @RequestPart(value = "file") MultipartFile file) throws Exception {		
+		ModelAndView mv = new ModelAndView();
+
+		// 파일 정보 변수
+		FileDto fileDto	   = new FileDto();
+		String pFileName   = "";
+		String lfileName   = "";
+		String fileExt     = "";
+		String filePath	   = "";
+		long   fileSize    = 0;
+		
+		// 파일 저장 경로 처리
+		filePath   = req.getSession().getServletContext().getRealPath("/resources/upload");
+		File saveDir = new File(filePath);
+		if (!saveDir.exists()) {
+			saveDir.mkdir();
+		}
+		
+		lfileName  = file.getOriginalFilename();
+		fileExt    = file.getOriginalFilename().split("\\.")[1];
+		pFileName  = file.getOriginalFilename().split("\\.")[0] + UUID.randomUUID() +"."+ fileExt;
+		fileSize   = file.getSize();
+		
+		fileDto.setLfileName(lfileName);
+		fileDto.setFileSize(fileSize);
+		fileDto.setFileExt(fileExt);
+		fileDto.setpFileName(pFileName);
+		fileDto.setFilePath(filePath);	
+		
+		// 파일 저장
+		this.writeFile(file, filePath+File.separator+pFileName);			
+        
+        // Smart Editor 리턴
+        // 예시) bNewLine=true&sFileName=IMG_0378.JPG&sFileURL=upload/IMG_0378.JPG
+        List<BasicNameValuePair> returnQueryString = new ArrayList();
+        returnQueryString.add(new BasicNameValuePair("bNewLine", "true"));
+        returnQueryString.add(new BasicNameValuePair("sFileName", lfileName));
+        returnQueryString.add(new BasicNameValuePair("sFileURL", "/resources/upload"+File.separator+pFileName));
+        
+        String queryString = URLEncodedUtils.format(returnQueryString, "UTF-8");
+        
+        response.getWriter().write(queryString);
+        response.getWriter().close();
+
+        return null;	
+	}
 	
 	// 파일을 실제로 write 하는 메서드 
 	private boolean writeFile(MultipartFile multipartFile, String saveFileName) { 
@@ -141,7 +206,7 @@ public class fileController {
 	}
 	
 	/**
-	 * Simply selects the home view to render by returning its name.
+	 * Test
 	 */
 	@RequestMapping(value = "/file/save", method = RequestMethod.POST)
 	public ModelAndView fileLogiccalSave(@ModelAttribute FileDto fileDto) {

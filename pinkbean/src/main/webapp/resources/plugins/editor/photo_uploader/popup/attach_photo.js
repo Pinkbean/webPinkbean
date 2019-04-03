@@ -334,7 +334,8 @@
     	var tempFile,
     		sUploadURL;
     	
-    	sUploadURL= opener.parent.c.root + '/upload/se'; 	//upload URL
+    	//sUploadURL= opener.parent.c.root + '/file/se/upload'; 	//upload URL
+    	sUploadURL= '/file/se/upload'; 	//upload URL
     	
     	//파일을 하나씩 보내고, 결과를 받음.
     	for(var j=0, k=0; j < nImageInfoCnt; j++) {
@@ -351,8 +352,8 @@
 	}
     
     function callAjaxForHTML5 (tempFile, sUploadURL){
-        var xhr;
-
+    	console.log('::callAjaxForHTML5::');
+    	
         // IE
         if (window.ActiveXObject)
             xhr = new ActiveXObject("Microsoft.XMLHTTP");
@@ -365,22 +366,17 @@
         xhr.onreadystatechange = function() {
             var responseText = xhr.responseText;
 
+            console.log('responseText ::' +responseText);
             if (xhr.readyState == 4) {
                 // HTTP Status - 성공
                 if (xhr.status == 200) {
-                    if (responseText.indexOf("NOTALLOW_") > -1) {
-                        var sFileName = responseText.replace("NOTALLOW_", "");
-                        alert("이미지 파일(jpg,gif,png,bmp)만 업로드 하실 수 있습니다. ("+sFileName+")");
-                    }
-                    // 성공 시에  responseText를 가지고 array로 만드는 부분.
-                    else {
-                        makeArrayFromString(responseText);
-                    }
+                	makeArrayFromString(responseText);
                 }
                 // HTTP Status - 실패
                 else {
                     onAjaxError();
                 }
+                
             }
         };
 
@@ -396,32 +392,6 @@
 
         // 전송
         xhr.send(form);
-
-        /*
-    	var oAjax = jindo.$Ajax(sUploadURL, {
-			type: 'xhr',
-			method : "post",
-			onload : function(res){ // 요청이 완료되면 실행될 콜백 함수
-				var sResString = res._response.responseText;
-				if (res.readyState() == 4) {
-					if(sResString.indexOf("NOTALLOW_") > -1){
-						var sFileName = sResString.replace("NOTALLOW_", "");
-						alert("이미지 파일(jpg,gif,png,bmp)만 업로드 하실 수 있습니다. ("+sFileName+")");
-					}else{
-						//성공 시에  responseText를 가지고 array로 만드는 부분.
-						makeArrayFromString(res._response.responseText);
-					}
-				}
-			},
-			timeout : 3,
-			onerror :  jindo.$Fn(onAjaxError, this).bind()
-		});
-		oAjax.header("ContentType","multipart/form-data");
-		oAjax.header("file-name",encodeURIComponent(tempFile.name));
-		oAjax.header("file-size",tempFile.size);
-		oAjax.header("file-Type",tempFile.type);
-		oAjax.request(tempFile);
-		*/
     }
     
     function makeArrayFromString(sResString){
@@ -525,9 +495,13 @@
  	 * jindo에 파일 업로드 사용.(iframe에 Form을 Submit하여 리프레시없이 파일을 업로드하는 컴포넌트)
  	 */
  	function callFileUploader (){
+ 		console.log('::callFileUploader::');
+ 		
  		oFileUploader = new jindo.FileUploader(jindo.$("uploadInputBox"),{
- 			sUrl  : opener.parent.c.root + '/upload/se',	//샘플 URL입니다.
- 	        sCallback : opener.parent.c.resRoot + '/plugins/smarteditor/photo_uploader/popup/callback.html',	//업로드 이후에 iframe이 redirect될 콜백페이지의 주소
+ 			//sUrl  : opener.parent.c.root + '/upload/se',	//샘플 URL입니다.
+ 			sUrl  : '/file/se/upload',
+ 			
+ 			sCallback : /*opener.parent.c.resRoot*/ + '/plugins/editor/photo_uploader/popup/callback.html',	//업로드 이후에 iframe이 redirect될 콜백페이지의 주소
  	    	sFiletype : "*.jpg;*.png;*.bmp;*.gif",						//허용할 파일의 형식. ex) "*", "*.*", "*.jpg", 구분자(;)	
  	    	sMsgNotAllowedExt : 'JPG, GIF, PNG, BMP 확장자만 가능합니다',	//허용할 파일의 형식이 아닌경우에 띄워주는 경고창의 문구
  	    	bAutoUpload : false,									 	//파일이 선택됨과 동시에 자동으로 업로드를 수행할지 여부 (upload 메소드 수행)
