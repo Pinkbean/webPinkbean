@@ -49,5 +49,6 @@ $(function() {
 	
 	<a href="/menu01">다른 메뉴에서 확인</a>
 	<a href="/axisj">Axisj</a>
+	<a href="/login">로그인</a>
 </body>
 </html>
