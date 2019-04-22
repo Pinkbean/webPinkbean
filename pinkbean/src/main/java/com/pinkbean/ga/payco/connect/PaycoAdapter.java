@@ -4,6 +4,7 @@ import org.springframework.social.connect.ApiAdapter;
 import org.springframework.social.connect.ConnectionValues;
 import org.springframework.social.connect.UserProfile;
 
+import com.mornya.lib.spring.social.naver.api.abstracts.UserOperation;
 import com.pinkbean.ga.payco.api.Payco;
 
 public class PaycoAdapter implements ApiAdapter<Payco> {
@@ -16,7 +17,8 @@ public class PaycoAdapter implements ApiAdapter<Payco> {
 
 	@Override
 	public void setConnectionValues(Payco api, ConnectionValues values) {
-		// TODO Auto-generated method stub
+		UserProfile userProfile = api.userProfile();
+		values.setProviderUserId(userProfile.getId());
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionData;
 import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.connect.support.OAuth2ConnectionFactory;
@@ -47,7 +48,8 @@ public class LoginSocialController {
 	@Autowired
 	private RestTemplate restTemplate;	
 	
-	private static final String BASE_URL = "http://192.168.0.230:8080";
+	//private static final String BASE_URL = "https://192.168.0.230:8443";
+	private static final String BASE_URL = "https://www.pinkbean.ga:443";
 	
 	/**
 	 * loginHome
@@ -135,11 +137,15 @@ public class LoginSocialController {
 		session.setAttribute("expires_in", 		accessGrant.getExpireTime());		
 		
 		Connection connection = connectionFactory.createConnection(accessGrant);
-		UserProfile userprofile = connection.fetchUserProfile();
-		
-		if (userprofile != null) {
-			session.setAttribute("user_id", userprofile.getId());	
+		ConnectionData connectionData = connection.createData();
+			
+		// UserProfile userprofile = connection.fetchUserProfile();	
+		if (connectionData != null) {
+			session.setAttribute("user_id", connectionData.getProviderUserId());
 		}
+		
+		// session에 ID가 존재하는 경우를 기존에 가입했던 회원이 있는 경우라고 가정한다.
+		// 아이디가 존재할 경우, 회원가입 페이지로 이동해야 한다. 이 때 각 소셜마다 서로 다른 페이지로 이동한다.
 		
 		try {
 			response.sendRedirect("/login");

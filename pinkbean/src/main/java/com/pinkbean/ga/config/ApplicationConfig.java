@@ -36,7 +36,8 @@ public class ApplicationConfig {
     public ConnectionFactoryRegistry connectionFactoryLocator() {
         ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
         
-        registry.addConnectionFactory(new FacebookConnectionFactory("639981633089720", "4c87c6f70c205f7342a67e743e19ec76"));
+        registry.addConnectionFactory(new FacebookConnectionFactory("254320005361242", "4025334dbfece0a41260f612ce9d3d45"));
+        //registry.addConnectionFactory(new FacebookConnectionFactory("639981633089720", "4c87c6f70c205f7342a67e743e19ec76"));
         registry.addConnectionFactory(new NaverConnectionFactory("bhNoJHMXwy2aHBoMoY0S", "kV4vzfQ1Bq"));
         registry.addConnectionFactory(new PaycoConnectionFactory("3RDQLzSRYbOV_FiHNbD3", "8ADqKfEblEiPMKPxwIHNlbTb"));
         return registry;
